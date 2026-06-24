@@ -1,6 +1,4 @@
-
 from train_model import train_model
-
 
 from sklearn.metrics import (
     mean_absolute_error,
@@ -10,6 +8,8 @@ from sklearn.metrics import (
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
+
 
 def classify_risk(rul):
 
@@ -61,7 +61,11 @@ def evaluate_model():
 
     print("\nSample Predictions:")
     print(results.head(20))
-    
+
+    # ---------------------------------
+    # Feature Importance
+    # ---------------------------------
+
     importance = pd.DataFrame({
         "Feature": X_test.columns,
         "Importance": model.feature_importances_
@@ -75,16 +79,74 @@ def evaluate_model():
     print("\nFeature Importance:")
     print(importance)
 
-    plt.figure(figsize=(8,5))
+    # ---------------------------------
+    # Create results folder
+    # ---------------------------------
+
+    os.makedirs(
+        "results",
+        exist_ok=True
+    )
+
+    # ---------------------------------
+    # Plot Feature Importance
+    # ---------------------------------
+
+    plt.figure(
+        figsize=(10, 6)
+    )
 
     plt.bar(
         importance["Feature"],
-        importance["Importance"]
+        importance["Importance"],
+        color="#115E59",
+        width=0.65
     )
 
-    plt.title("Feature Importance")
-    plt.xlabel("Features")
-    plt.ylabel("Importance")
+    plt.title(
+        "Feature Importance",
+        fontsize=16,
+        fontweight="bold",
+        pad=15
+    )
+
+    plt.xlabel(
+        "Features",
+        fontsize=12
+    )
+
+    plt.ylabel(
+        "Importance Score",
+        fontsize=12
+    )
+
+    plt.xticks(
+        rotation=30,
+        ha="right"
+    )
+
+    plt.grid(
+        axis="y",
+        linestyle="--",
+        alpha=0.25
+    )
+
+    ax = plt.gca()
+
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    plt.tight_layout()
+
+    plt.savefig(
+        "results/feature_importance.png",
+        dpi=300,
+        bbox_inches="tight"
+    )
+
+    print(
+        "\nFeature Importance plot saved successfully!"
+    )
 
     plt.show()
 
